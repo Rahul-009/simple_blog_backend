@@ -24,9 +24,7 @@ app.use(cookieParser());
 
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
-mongoose.connect(
-  "mongodb+srv://rahul:trek00716@cluster0.swsixkh.mongodb.net/?retryWrites=true&w=majority"
-);
+mongoose.connect(`${process.env.DATABASE_CONNECTION_URL}`);
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -142,7 +140,7 @@ app.get("/post/:id", async (req, res) => {
   res.json(postDoc);
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 4123;
 app.listen(port, () => {
   console.log(`app listening at port ${port}`);
 });
