@@ -6,7 +6,9 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const fs = require("fs");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const User = require("./models/User");
 const Post = require("./models/Post");
 
@@ -16,7 +18,7 @@ const salt = bcrypt.genSaltSync(10);
 const secret = "ajsdfhuahf334jhoh";
 
 const app = express();
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({ credentials: true, origin: `${process.env.BASE_URL}` }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -118,10 +120,14 @@ app.put("/post", upload.single("file"), async (req, res) => {
 
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
-  jwt.verify(token, secret, {}, (err, info) => {
-    if (err) throw err;
-    res.json(info);
-  });
+  try {
+    jwt.verify(token, secret, {}, (err, info) => {
+      if (err) throw err;
+      res.json(info);
+    });
+  } catch (err) {
+    res.status(403).json("token not found");
+  }
 });
 
 app.get("/post", async (req, res) => {
@@ -136,6 +142,7 @@ app.get("/post/:id", async (req, res) => {
   res.json(postDoc);
 });
 
-app.listen(4000, () => {
-  console.log("app listening at port 4000");
+const port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`app listening at port ${port}`);
 });
