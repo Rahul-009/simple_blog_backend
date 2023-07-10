@@ -140,6 +140,10 @@ app.get("/post/:id", async (req, res) => {
   res.json(postDoc);
 });
 
+app.get("/", (req, res) => {
+  res.json("hello bloggers");
+});
+
 const port = process.env.PORT || 4123;
 app.listen(port, () => {
   console.log(`app listening at port ${port}`);
